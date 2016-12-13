@@ -18,19 +18,16 @@ RUN apt-get update \
     && apt-get install -y build-essential \
                        wget \
                        curl \
-                       git
+                       git \
+                       supervisor
 
 # Install apache2
 RUN apt-get update \
     && apt-get -y install apache2
 
 COPY magento.conf /etc/apache2/sites-available/
-
-RUN a2ensite magento.conf \
-    && a2dissite 000-default.conf
-
-# RUN service apache2 reload
-RUN service apache2 restart
+COPY start.sh /start.sh
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Install PHP
    RUN apt-get -y update \
@@ -48,16 +45,11 @@ RUN service apache2 restart
                            php7.0-zip \
                            php7.0-bcmath \
                            php7.0-iconv
-# Configure PHP
- RUN  sed -i 's/memory_limit = 128MB/memory_limit = 2G/' /etc/php/7.0/apache2/ph                                                                                                                     p.ini
- RUN  a2enmod rewrite
- RUN  phpenmod mcrypt
- RUN service apache2 restart
 
 # MySQL
-RUN echo "mysql-server mysql-server/root_password password password" | debconf-s                                                                                                                     et-selections \
-    && echo "mysql-server mysql-server/root_password_again password password" |                                                                                                                      debconf-set-selections \
-    && apt install -y mysql-server mysql-client
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server mysql-client
+
+# RUN sed -i 's/MYSQL_PASSWORD = password/MYSQL_PASSWORD = ${MYSQL_PASSWORD}/' /start.sh
 
 # RUN mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magen                                                                                                                     to@localhost IDENTIFIED BY 'magento';" --password=password
 
@@ -86,6 +78,6 @@ RUN cd /var/www \
        && chmod -R 777 /var/www/magento/pub/media \
        && chmod -R 777 /var/www/magento/pub/static
 
-CMD ["apachectl", "-DFOREGROUND"]
+CMD ["/bin/bash", "/start.sh"]
 
 EXPOSE 80
