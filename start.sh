@@ -8,5 +8,12 @@
 a2enmod rewrite
 phpenmod mcrypt
 
+# configure mysql
+/usr/bin/mysqld_safe & 
+ sleep 10s 
+
+mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';"
+ killall mysqld
+
 # start all the services
 /usr/bin/supervisord
