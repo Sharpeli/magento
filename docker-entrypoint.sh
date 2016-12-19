@@ -21,24 +21,24 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
 	# configure apache
 	 a2ensite magento.conf
 	 a2dissite 000-default.conf
+         service apache2 reload
 
 	#configure PHP
-	 sed -i 's/memory_limit = 128MB/memory_limit = 2G/' /etc/php/7.0/apache2/php.ini
+	sed -i 's/memory_limit = 128MB/memory_limit = 2G/' /etc/php/7.0/apache2/php.ini
 	a2enmod rewrite
+        phpenmod mcrypt
 
 	# configure mysql
-	if /usr/bin/mysqld_safe; then
-		mysqladmin -u root password $DB_PASSWORD
-        	mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';" -p $DB_PASSWORD
-                killall mysqld
-	fi
+	/usr/bin/mysqld_safe
+ 	mysqladmin -u root password $DB_PASSWORD
+        mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';" -p $DB_PASSWORD
         
         # set file permission for installation
         chmod -R 755 /var/www/magento/
-        chmod -R 755 /var/www/magento/app/etc
-        chmod -R 755 /var/www/magento/var/
-        chmod -R 755 /var/www/magento/pub/media
-        chmod -R 755 /var/www/magento/pub/static
+        chmod -R 777 /var/www/magento/app/etc
+        chmod -R 777 /var/www/magento/var/
+        chmod -R 777 /var/www/magento/pub/media
+        chmod -R 777 /var/www/magento/pub/static
         
         # install the magento
         /var/www/magento/bin/magento setup:install --admin-firstname=$ADMIN_FIRSTNAME \
@@ -52,9 +52,10 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
 	#configure redis
 	if [ -f /var/www/magento/app/etc/env.php ]; then 
 		sed -e "/'save' => 'files',/ {" -e "r /session.conf" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
-		sed -e "/);/ {" -e "r /page_caching.conf" -e "d" -e "}" -i /var/www/magento/bin/magento/app/etc/env.php
+		sed -e "/);/ {" -e "r /page_caching.conf" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
 	fi
 fi
 		
 # start all the services
+killall mysqld
 /usr/bin/supervisord
