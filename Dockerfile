@@ -1,10 +1,6 @@
 # Build magento 2 from ubuntu base
 FROM ubuntu:16.04
 
-# Install utils
-#RUN  apt-get update \
-#     && apt-get install -y apt-utils
-
 #Install build-essential, wget, curl, git, supervisor
 RUN apt-get update \
     && apt-get install -y build-essential \
@@ -18,8 +14,10 @@ RUN apt-get update \
     && apt-get -y install apache2
 
 COPY magento.conf /etc/apache2/sites-available/
-COPY start.sh /start.sh
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY session.conf /session.conf
+COPY page_caching.conf /page_caching.conf
 
 # Install PHP
    RUN apt-get -y update \
@@ -59,4 +57,6 @@ RUN cd /var/www \
     && cd magento \
     && composer install
 
-ENTRYPOINT ["/bin/bash", "/start.sh"]
+VOLUME ["/var/www/magento"]
+
+ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]

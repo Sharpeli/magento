@@ -8,7 +8,7 @@ set_default() {
 }
 
 # the file env.php doesn't exitst means that magento hasn;t been insalled
-if [! -f /var/www/magento/app/etc/env.php]; then
+if [ ! -f /var/www/magento/app/etc/env.php ]; then
 	set_default 'ADMIN_FIRSTNAME' 'firstname'
 	set_default 'ADMIN_LASTNAME' 'lastname'
 	set_default 'ADMIN_EMAIL' 'sample@example.com'
@@ -30,6 +30,7 @@ if [! -f /var/www/magento/app/etc/env.php]; then
 	if /usr/bin/mysqld_safe; then
 		mysqladmin -u root password $DB_PASSWORD
         	mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';" -p $DB_PASSWORD
+                killall mysqld
 	fi
         
         # set file permission for installation
@@ -46,12 +47,12 @@ if [! -f /var/www/magento/app/etc/env.php]; then
 						   --admin-user=$ADMIN_USER \
 						   --admin-password=$ADMIN_PASSWORD \
 						   --db-name=$DB_NAME \
-  						   --db-password=$DB__PASSWORD \
+  						   --db-password=$DB_PASSWORD \
 						   --backend-frontname=$BACKEND_FRONTNAME
 	#configure redis
 	if [ -f /var/www/magento/app/etc/env.php ]; then 
-		sed -e "/'save' => 'files',/ {" -e "r session.conf" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
-		sed -e "/);/ {" -e "r page_caching.conf" -e "d" -e "}" -i /var/www/magento/bin/magento/app/etc/env.php
+		sed -e "/'save' => 'files',/ {" -e "r /session.conf" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
+		sed -e "/);/ {" -e "r /page_caching.conf" -e "d" -e "}" -i /var/www/magento/bin/magento/app/etc/env.php
 	fi
 fi
 		
