@@ -21,24 +21,21 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
 	# configure apache
 	 a2ensite magento.conf
 	 a2dissite 000-default.conf
-         service apache2 reload
 
 	#configure PHP
 	sed -i 's/memory_limit = 128MB/memory_limit = 2G/' /etc/php/7.0/apache2/php.ini
 	a2enmod rewrite
         phpenmod mcrypt
+        
+	#restart apache
+        service apache2 restart
 
 	# configure mysql
-	/usr/bin/mysqld_safe
  	mysqladmin -u root password $DB_PASSWORD
-        mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';" -p $DB_PASSWORD
+        mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';" --password=$DB_PASSWORD
         
         # set file permission for installation
-        chmod -R 755 /var/www/magento/
-        chmod -R 777 /var/www/magento/app/etc
-        chmod -R 777 /var/www/magento/var/
-        chmod -R 777 /var/www/magento/pub/media
-        chmod -R 777 /var/www/magento/pub/static
+        chmod -R 777 /var/www/magento/
         
         # install the magento
         /var/www/magento/bin/magento setup:install --admin-firstname=$ADMIN_FIRSTNAME \
@@ -57,5 +54,4 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
 fi
 		
 # start all the services
-killall mysqld
 /usr/bin/supervisord
