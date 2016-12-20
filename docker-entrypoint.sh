@@ -19,8 +19,9 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
         set_default 'BACKEND_FRONTNAME' 'admin'
 
 	# configure apache
-	 a2ensite magento.conf
-	 a2dissite 000-default.conf
+	sed -i 's/Listen 80/Listen 5000/' /etc/apache2/ports.conf
+	a2ensite magento.conf
+	a2dissite 000-default.conf
 
 	#configure PHP
 	sed -i 's/memory_limit = 128MB/memory_limit = 2G/' /etc/php/7.0/apache2/php.ini
