@@ -29,12 +29,10 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
       
 
 	# configure mysql
-        /usr/bin/mysqld_safe
+        /usr/bin/mysqld_safe &
+        sleep 10s
  	mysqladmin -u root password $DB_PASSWORD
         mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';" --password=$DB_PASSWORD
-        
-        # set file permission for installation
-        chmod -R 777 /var/www/magento/
         
         # install the magento
         /var/www/magento/bin/magento setup:install --admin-firstname=$ADMIN_FIRSTNAME \
@@ -47,11 +45,16 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
 						   --backend-frontname=$BACKEND_FRONTNAME
 	#configure redis
 	if [ -f /var/www/magento/app/etc/env.php ]; then 
-		sed -e "/'save' => 'files',/ {" -e "r /session.conf" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
-		sed -e "/);/ {" -e "r /page_caching.conf" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
+		sed -e "/'save' => 'files',/ {" -e "r /session.php" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
+		sed -e "/);/ {" -e "r /page_caching.php" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
 	fi
+	
+        # set file permission for installation
+	chmod -R 777 /var/www/magento/
+
+	killall mysqld
+        sleep 10s
 fi
 		
 # start all the services
-killall mysqld
 /usr/bin/supervisord
