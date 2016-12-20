@@ -57,4 +57,6 @@ RUN cd /var/www \
     && cd magento \
     && composer install
 
+EXPOSE 5000
+
 ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
