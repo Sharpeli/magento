@@ -43,13 +43,13 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
 						   --db-name=$DB_NAME \
   						   --db-password=$DB_PASSWORD \
 						   --backend-frontname=$BACKEND_FRONTNAME
-	#configure redis
+	# configure redis
 	if [ -f /var/www/magento/app/etc/env.php ]; then 
 		sed -e "/'save' => 'files',/ {" -e "r /session.php" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
 		sed -e "/);/ {" -e "r /page_caching.php" -e "d" -e "}" -i /var/www/magento/app/etc/env.php
 	fi
 	
-        # set file permission for installation
+        # set file permissions
 	chmod -R 777 /var/www/magento/
 
 	killall mysqld
