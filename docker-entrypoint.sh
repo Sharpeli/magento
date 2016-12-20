@@ -2,9 +2,9 @@
 
 set_default() {
 	local var="$1"
-	if [ "${var}"="" ]; then
-		export "$var"="$2"
-	fi
+        if [ ! "${!var:-}" ]; then
+                 export "$var"="$2"
+        fi
 }
 
 # the file env.php doesn't exitst means that magento hasn;t been insalled
