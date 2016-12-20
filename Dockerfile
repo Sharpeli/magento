@@ -16,8 +16,8 @@ RUN apt-get update \
 COPY magento.conf /etc/apache2/sites-available/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY session.conf /session.conf
-COPY page_caching.conf /page_caching.conf
+COPY session.php /session.php
+COPY page_caching.php /page_caching.php
 
 # Install PHP
    RUN apt-get -y update \
@@ -56,7 +56,5 @@ RUN cd /var/www \
     && git clone https://github.com/magento/magento2.git magento \
     && cd magento \
     && composer install
-
-VOLUME ["/var/www/magento"]
 
 ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
