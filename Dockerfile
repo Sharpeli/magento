@@ -1,23 +1,18 @@
 # Build magento 2 from ubuntu base
 FROM ubuntu:16.04
 
+ENV MAGENTO_VERSION 2.1.3
+
 #Install build-essential, wget, curl, git, supervisor
 RUN apt-get update \
     && apt-get install -y build-essential \
                        wget \
                        curl \
-                       git \
-                       supervisor
+                       git
 
-# Install apache2
-RUN apt-get update \
-    && apt-get -y install apache2
-
-COPY magento.conf /etc/apache2/sites-available/
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY session.php /session.php
-COPY page_caching.php /page_caching.php
+# Install apache2 
+RUN apt-get update \ 
+    && apt-get -y install apache2 
 
 # Install PHP
    RUN apt-get -y update \
@@ -55,8 +50,19 @@ RUN  curl -sS https://getcomposer.org/installer | php \
 RUN cd /var/www \
     && git clone https://github.com/magento/magento2.git magento \
     && cd magento \
+    && git checkout tags/$MAGENTO_VERSION -b $MAGENTO_VERSION \
     && composer install
 
-EXPOSE 5000
+COPY magento.conf /etc/apache2/sites-available/
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY session.php /session.php
+COPY page_caching.php /page_caching.php
 
-ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh"]
+# change permissions for docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+EXPOSE 80
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["apachectl","-DFOREGROUND"]
