@@ -10,28 +10,59 @@
     "servicePlanName": {
       "type": "string"
     },
-    "hostingEnvironment": {
-      "type": "string",
-      "defaultValue": ""
-    },
     "location": {
       "type": "string",
-      "defaultValue": "West US"
+      "defaultValue": "West US",
+      "allowedValues": [
+        "West US"
+      ]
     },
     "sku": {
       "type": "string",
-      "defaultValue": "Standard"
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard"
+      ]
     },
     "skuCode": {
       "type": "string",
+      "defaultValue": "S2",
       "allowedValues": [
         "S2",
         "S3"
       ]
     },
-    "workerSize": {
+    "adminFirstName": {
       "type": "string",
-      "defaultValue": "1"
+      "defaultValue": "firstname"
+    },
+    "adminLastName": {
+      "type": "string",
+      "defaultValue": "lastname"
+    },
+    "adminEmail": {
+      "type": "string",
+      "defaultValue": "sample@example.com"
+    },
+    "adminUserName": {
+      "type": "string",
+      "defaultValue": "root"
+    },
+    "adminPassword": {
+      "type": "string",
+      "defaultValue": "password1234"
+    },
+    "dataBaseName": {
+      "type": "string",
+      "defaultValue": "magento"
+    },
+    "dataBasePassword": {
+      "type": "string",
+      "defaultValue": "password1234"
+    },
+    "backendFrontName": {
+      "type": "string",
+      "defaultValue": "admin"
     }
   },
   "resources": [
@@ -47,35 +78,35 @@
             },
             {
               "name": "ADMIN_FIRSTNAME",
-              "value": "firstname"
+              "value": "[parameters('adminFirstName')]"
             },
             {
               "name": "ADMIN_LASTNAME",
-              "value": "lastname"
+              "value": "[parameters('adminLastName')]"
             },
             {
               "name": "ADMIN_EMAIL",
-              "value": "sample@example.com"
+              "value": "[parameters('adminEmail')]"
             },
             {
               "name": "ADMIN_USER",
-              "value": "root"
+              "value": "[parameters('adminUserName')]"
             },
             {
               "name": "ADMIN_PASSWORD",
-              "value": "password1234"
+              "value": "[parameters('adminPassword')]"
             },
             {
               "name": "DB_NAME",
-              "value": "magento"
+              "value": "[parameters('dataBaseName')]"
             },
             {
               "name": "DB_PASSWORD",
-              "value": "password1234"
+              "value": "[parameters('dataBasePassword')]"
             },
             {
               "name": "BACKEND_FRONTNAME",
-              "value": "admin"
+              "value": "[parameters('backendFrontName')]"
             },
             {
               "name": "BASE_URL",
@@ -85,7 +116,7 @@
         },
         "name": "[parameters('siteName')]",
         "serverFarmId": "[parameters('servicePlanName')]",
-        "hostingEnvironment": "[parameters('hostingEnvironment')]"
+        "hostingEnvironment": ""
       },
       "apiVersion": "2016-03-01",
       "location": "[parameters('location')]",
@@ -100,10 +131,10 @@
       "location": "[parameters('location')]",
       "properties": {
         "name": "[parameters('servicePlanName')]",
-        "workerSizeId": "[parameters('workerSize')]",
+        "workerSizeId": "1",
         "reserved": true,
         "numberOfWorkers": "1",
-        "hostingEnvironment": "[parameters('hostingEnvironment')]"
+        "hostingEnvironment": ""
       },
       "sku": {
         "Tier": "[parameters('sku')]",
