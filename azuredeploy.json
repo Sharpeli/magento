@@ -1,81 +1,117 @@
 {
-    "parameters": {
-        "dockerRegistryImageName": {
-            "type": "string"
-        },
-        "name": {
-            "type": "string"
-        },
-        "hostingPlanName": {
-            "type": "string"
-        },
-        "hostingEnvironment": {
-            "type": "string"
-        },
-        "location": {
-            "type": "string"
-        },
-        "sku": {
-            "type": "string"
-        },
-        "skuCode": {
-            "type": "string"
-        },
-        "workerSize": {
-            "type": "string"
-        },
-        "serverFarmResourceGroup": {
-            "type": "string"
-        },
-        "subscriptionId": {
-            "type": "string"
-        }
+  "parameters": {
+    "dockerRegistryImageName": {
+      "type": "string",
+      "defaultValue": "sharpeli/magento:v108"
     },
-    "resources": [
-        {
-            "type": "Microsoft.Web/sites",
-            "name": "[parameters('name')]",
-            "properties": {
-                "siteConfig": {
-                    "appSettings": [
-                        {
-                            "name": "DOCKER_CUSTOM_IMAGE_NAME",
-                            "value": "[parameters('dockerRegistryImageName')]"
-                        }
-                    ]
-                },
-                "name": "[parameters('name')]",
-                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-                "hostingEnvironment": "[parameters('hostingEnvironment')]"
+    "siteName": {
+      "type": "string"
+    },
+    "servicePlanName": {
+      "type": "string"
+    },
+    "hostingEnvironment": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "West US"
+    },
+    "sku": {
+      "type": "string",
+      "defaultValue": "Standard"
+    },
+    "skuCode": {
+      "type": "string",
+      "allowedValues": [
+        "S2",
+        "S3"
+      ]
+    },
+    "workerSize": {
+      "type": "string",
+      "defaultValue": "1"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[parameters('siteName')]",
+      "properties": {
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "DOCKER_CUSTOM_IMAGE_NAME",
+              "value": "[parameters('dockerRegistryImageName')]"
             },
-            "apiVersion": "2016-03-01",
-            "location": "[parameters('location')]",
-            "tags": {
-                "[concat('hidden-related:', '/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "empty"
+            {
+              "name": "ADMIN_FIRSTNAME",
+              "value": "firstname"
             },
-            "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
-            ]
+            {
+              "name": "ADMIN_LASTNAME",
+              "value": "lastname"
+            },
+            {
+              "name": "ADMIN_EMAIL",
+              "value": "sample@example.com"
+            },
+            {
+              "name": "ADMIN_USER",
+              "value": "root"
+            },
+            {
+              "name": "ADMIN_PASSWORD",
+              "value": "password1234"
+            },
+            {
+              "name": "DB_NAME",
+              "value": "magento"
+            },
+            {
+              "name": "DB_PASSWORD",
+              "value": "password1234"
+            },
+            {
+              "name": "BACKEND_FRONTNAME",
+              "value": "admin"
+            },
+            {
+              "name": "BASE_URL",
+              "value": "[concat('http://', parameters('siteName'), '.azurewebsites.net')]"
+            }
+          ]
         },
-        {
-            "apiVersion": "2016-09-01",
-            "name": "[parameters('hostingPlanName')]",
-            "type": "Microsoft.Web/serverfarms",
-            "location": "[parameters('location')]",
-            "properties": {
-                "name": "[parameters('hostingPlanName')]",
-                "workerSizeId": "[parameters('workerSize')]",
-                "reserved": true,
-                "numberOfWorkers": "1",
-                "hostingEnvironment": "[parameters('hostingEnvironment')]"
-            },
-            "sku": {
-                "Tier": "[parameters('sku')]",
-                "Name": "[parameters('skuCode')]"
-            },
-            "kind": "linux"
-        }
-    ],
-    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0"
+        "name": "[parameters('siteName')]",
+        "serverFarmId": "[parameters('servicePlanName')]",
+        "hostingEnvironment": "[parameters('hostingEnvironment')]"
+      },
+      "apiVersion": "2016-03-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[parameters('servicePlanName')]"
+      ]
+    },
+    {
+      "apiVersion": "2016-09-01",
+      "name": "[parameters('servicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[parameters('location')]",
+      "properties": {
+        "name": "[parameters('servicePlanName')]",
+        "workerSizeId": "[parameters('workerSize')]",
+        "reserved": true,
+        "numberOfWorkers": "1",
+        "hostingEnvironment": "[parameters('hostingEnvironment')]"
+      },
+      "sku": {
+        "Tier": "[parameters('sku')]",
+        "Name": "[parameters('skuCode')]"
+      },
+      "kind": "linux"
+    }
+  ],
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0"
 }
