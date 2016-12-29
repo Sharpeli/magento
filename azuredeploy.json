@@ -1,67 +1,81 @@
-{ 
-   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#", 
-      "contentVersion": "1.0.0.0", 
-      "parameters": { 
-       "siteName": { "type":"string" }, 
-       "aspName": { "type":"string" } 
-       }, 
-      "resources": [ { 
-        "apiVersion": "2015-05-01", 
-        "name": "[parameters('aspName')]", 
-        "type": "Microsoft.Web/serverfarms", 
-        "location": "West US", 
-        "tags": null, 
-        "properties": { 
-          "maximumNumberOfWorkers": 1, 
-          "geoRegion": "West US", 
-          "reserved": true, 
-          "planName": "VirtualDedicatedPlan" 
-        }, 
-        "sku": { 
-          "name": "S2", 
-          "tier": "Standard", 
-          "size": "S2", 
-          "family": "S", 
-          "capacity": 1 
-        } 
-      }, 
-      { 
-        "apiVersion": "2015-05-01", 
-        "name": "[parameters('siteName')]", 
-        "type": "Microsoft.Web/sites", 
-       "location": "West US", 
-        "dependsOn": [ "[parameters('aspName')]" ], 
-        "properties": { 
-          "serverFarmId": "[parameters('aspName')]", 
-          "siteConfig": { 
-            "properties": { 
-              "numberOfWorkers": "1"
-            } 
-          }, 
-          "maxNumberOfWorkers": "1"           
-        } ,
-	"resources":[
-	{ 
-          "apiVersion": "2015-08-01", 
-          "name": "appsettings", 
-           "type": "config", 
-           "dependsOn": [ 
-             "[resourceId('Microsoft.Web/Sites', parameters('siteName'))]" 
-           ], 
-           "properties": { 
-             "DOCKER_CUSTOM_IMAGE_NAME": "sharpeli/magento:v108", 
-             "ADMIN_FIRSTNAME": "firstname", 
-             "ADMIN_LASTNAME": "lastname",
-             "ADMIN_EMAIL": "sample@example.com",
-	     "ADMIN_USER": "root",
-	     "ADMIN_PASSWORD": "password1234",
-	     "DB_NAME": "magento",
-	     "DB_PASSWORD": "password1234",
-             "BACKEND_FRONTNAME": "admin",
-	     "BASE_URL": "[concat('http://', parameters('siteName'), '.azurewebsites.net')]"
-           } 
+{
+    "parameters": {
+        "dockerRegistryImageName": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "hostingPlanName": {
+            "type": "string"
+        },
+        "hostingEnvironment": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "skuCode": {
+            "type": "string"
+        },
+        "workerSize": {
+            "type": "string"
+        },
+        "serverFarmResourceGroup": {
+            "type": "string"
+        },
+        "subscriptionId": {
+            "type": "string"
         }
-     ]
-   }
- ] 
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "name": "[parameters('name')]",
+            "properties": {
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "DOCKER_CUSTOM_IMAGE_NAME",
+                            "value": "[parameters('dockerRegistryImageName')]"
+                        }
+                    ]
+                },
+                "name": "[parameters('name')]",
+                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "hostingEnvironment": "[parameters('hostingEnvironment')]"
+            },
+            "apiVersion": "2016-03-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                "[concat('hidden-related:', '/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "empty"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+            ]
+        },
+        {
+            "apiVersion": "2016-09-01",
+            "name": "[parameters('hostingPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('location')]",
+            "properties": {
+                "name": "[parameters('hostingPlanName')]",
+                "workerSizeId": "[parameters('workerSize')]",
+                "reserved": true,
+                "numberOfWorkers": "1",
+                "hostingEnvironment": "[parameters('hostingEnvironment')]"
+            },
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
+            },
+            "kind": "linux"
+        }
+    ],
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0"
 }
