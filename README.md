@@ -1,2 +1,1 @@
-# magento
-A Docker build context for magento cms with apache2, php, mysql and redis
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
