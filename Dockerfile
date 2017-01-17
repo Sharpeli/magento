@@ -8,7 +8,7 @@ RUN apt-get update \
     && apt-get install -y build-essential \
                        wget \
                        curl \
-                       git
+		       cron
 
 # Install apache2 
 RUN apt-get update \ 
@@ -43,20 +43,27 @@ RUN cd redis-stable \
     && make install
 
 #Install  Compose
-RUN  curl -sS https://getcomposer.org/installer | php \
+RUN cd && curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
 
 #Download Mangento and ready to install
 RUN cd /var/www \
-    && git clone https://github.com/magento/magento2.git magento \
-    && cd magento \
-    && git checkout tags/$MAGENTO_VERSION -b $MAGENTO_VERSION \
-    && composer install
+    && mkdir magento \
+    && wget https://raw.githubusercontent.com/Sharpeli/Packages/master/Magento-CE-2_1_3_tar_gz-2016-12-13-09-08-39.tar.gz \
+    &&  tar xvzf ./Magento-CE-2_1_3_tar_gz-2016-12-13-09-08-39.tar.gz -C ./magento
+
+# set file permissions
+RUN	chmod -R 755 /var/www/magento/ \
+	&& chmod -R 777 /var/www/magento/app/etc/ \
+        && chmod -R 777 /var/www/magento/var/ \ 
+	&& chmod -R 777 /var/www/magento/pub/media/ \ 
+	&& chmod -R 777 /var/www/magento/pub/static/ 
 
 COPY magento.conf /etc/apache2/sites-available/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 COPY session.php /session.php
 COPY page_caching.php /page_caching.php
+COPY cronjobs /cronjobs
 
 # change permissions for docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
@@ -64,5 +71,3 @@ RUN chmod +x /docker-entrypoint.sh
 EXPOSE 80
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
-CMD ["apachectl","-DFOREGROUND"]
