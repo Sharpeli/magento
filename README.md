@@ -13,7 +13,7 @@ This is a Docker build context to build the Docker image for Magento2 CE 2.1.3 w
 6. Magento2 CE 2.1.3
 
 #### Note:  
-To download the Magento2 package from [Magento Marketplace](https://magento.com/tech-resources/download) need to login, here we push the package to github repository, and the Dockerfile are using the URL of the repository to get the Magento2 package, if you need to use the package from your URL please change the ENV 'PACKAGE_URL' to yours in the Dockerfile.  
+To download the Magento2 package from [Magento Marketplace](https://magento.com/tech-resources/download) need to login, here we push the package to github repository, and the Dockerfile are using the URL of the repository to get the Magento2 package, if you need to use the package from your URL please change the ENV 'PACKAGE_URL' and 'PACKAGE_NAME' to yours in the Dockerfile.  
 
 ## How to Build the Image
 
