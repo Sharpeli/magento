@@ -5,7 +5,7 @@ This is a Docker build context to build a Docker image for Magento2 CE 2.1.3 whi
 
 ## What the Docker Image Contains
 
-1. Ubuntu 16.04 (as base image).
+1. Ubuntu 16.04 (as base image)
 2. Apache2
 3. PHP7.0
 4. Redis
@@ -41,20 +41,22 @@ ADMIN_PASSWORD      password1234
 DB_NAME             magento  
 DB_PASSWORD         password1234  
 BACKEND_FRONTNAME   admin  
+BASE_URL            http://127.0.0.1/
 ```
 
 ####Note:  
-1. The variable BASE_URL must be set the same with your host name to avoid issues on accessing the Magento Admin Panel, see the introduction for the parameter 'base-url' in [Mangento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
-2. If the environment variables listed above hasn't been set, the default values will be used, however, it's recommended to use different values for security reasons.  
-3. It's not recommended to simply use 'admin' as the value of BACKEND_FRONTNAME, see the introduction for the parameter 'backend-frontname' in [Mangento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
+1. The variable BASE_URL must be set the same with your host name to avoid issues on accessing the Magento Admin Panel, see the introduction for the parameter 'base-url' in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
+2. If the environment variables listed above haven't been set, the default values will be used, however, it's recommended to use different values for security reasons.  
+3. It's not recommended to simply use 'admin' as the value of BACKEND_FRONTNAME, see the introduction for the parameter 'backend-frontname' in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
 
 ## How to Apply the Docker Image on Azure Web App for Linux
 
-#### Deploy Azure Web App With Docker Image Aotumatically
+#### Deploy Azure Web App With Docker Image Automatically
 
 1. Push the image to the Docker Hub after you build it.  
-2. Change the value of the parameter 'dockerRegistryImageName' to the name of your image.  
+2. Change the value of the parameter 'dockerRegistryImageName' to the name of your pushed image.  
 3. Press this button.  
+  
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)  
 
 #### Deploy Azure Web App With Docker Image Manually
@@ -75,11 +77,11 @@ BACKEND_FRONTNAME            <backend frontname>
 BASE_URL                     <site base url>                       <Required>  
 ```
 
-3. Your Docker image will be pulled and run at the first requests reach the server, so the cold start process will be quite long.  
+3. Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
 
-## How To Make Optimization Of The Site
+## How To Make Optimization of The Site
 
-#### Enable The Cache
+#### Enable Flat Categories and Products
 
 Go to the admin panel, STORES -> Configuration -> CATALOG -> Catalog -> Use Flat Catalog Category  and put “Yes” .  
 
@@ -89,13 +91,13 @@ For JS:
 1. Go to the admin panel,  STORES -> Configuration -> ADVANCED -> Developer -> JavaScript Settings  
 2. Merge JavaScript Files -> Yes  
 3. Minify JavaScript Files -> Yes  
-
+  
 For CSS:  
 1. Go to the admin panel,  STORES -> Configuration -> ADVANCED -> Developer -> CSS Settings  
 2. Merge CSS Files -> Yes  
 3. Minify CSS Files -> Yes  
 
-#### Enable the Caching
+#### Enable Caching
 
 Go to admin portal, SYSTEM -> Cache Management  
 
@@ -104,4 +106,3 @@ Go to admin portal, SYSTEM -> Cache Management
 Content Delivery Network (CDN) is a special system that can connect all cache servers. In addition to supported geographical proximity, CDN will take over the delivering web content and fasten the page loading.  
 
 Go to admin portal, Stores -> Configuration > General > Web > Base URLs (Secure).  
-
