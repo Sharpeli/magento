@@ -1,6 +1,6 @@
 # Magento2 Docker Image
 
-This is a Docker build context to build a Docker image for Magento2 CE 2.1.3 which contains Apache2, PHP7.0, MySQL, Redis.  
+This is a Docker build context to build the Docker image for Magento2 CE 2.1.3 which contains all the running prerequisite ( Apache2, PHP7.0, MySQL, Redis).  
   
 
 ## What the Docker Image Contains
@@ -51,15 +51,15 @@ BASE_URL            http://127.0.0.1/
 
 ## How to Apply the Docker Image on Azure Web App for Linux
 
-#### Deploy Azure Web App With Docker Image Automatically
+#### Deploy Azure Web App with Docker Image Automatically
 
 1. Push the image to the Docker Hub after you build it.  
 2. Change the value of the parameter 'dockerRegistryImageName' to the name of your pushed image.  
 3. Press this button.  
   
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)  
+  [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)  
 
-#### Deploy Azure Web App With Docker Image Manually
+#### Deploy Azure Web App with Docker Image Manually
 
 1. Create the resource Azure web app on Linux (Preview).  
 2. Add these application settings:  
@@ -76,10 +76,9 @@ DB_PASSWORD                  <database password>
 BACKEND_FRONTNAME            <backend frontname>  
 BASE_URL                     <site base url>                       <Required>  
 ```
-
 3. Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
 
-## How To Make Optimization of The Site
+## How To Make Optimization of your Site
 
 #### Enable Flat Categories and Products
 
@@ -105,4 +104,4 @@ Go to admin portal, SYSTEM -> Cache Management
 
 Content Delivery Network (CDN) is a special system that can connect all cache servers. In addition to supported geographical proximity, CDN will take over the delivering web content and fasten the page loading.  
 
-Go to admin portal, Stores -> Configuration > General > Web > Base URLs (Secure).  
+Go to admin portal, Stores -> Configuration > General > Web > Base URLs (Secure)  
