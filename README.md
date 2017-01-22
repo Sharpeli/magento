@@ -34,7 +34,7 @@ run the command:
 ```
 $sudo docker run -t -p 80:80 -e BASE_URL=http://<your host name>/ [-e ADMIN_USER=<your admin user> ...] [--name <the Docker container name>] <image name>
 ```
-You may need to set environment variables to run this image, here are all the environment variables and their default value:  
+You may need to set environment variables to run the image, here are all the environment variables and their default values:  
 
 ```
 ADMIN_FIRSTNAME     firstname             <admin first name>
@@ -60,7 +60,7 @@ PRODUCTION_MODE     false                 <whether to set the site to production
 #### Deploy Azure Web App with Docker Image Automatically
 
 1. Push the image to the Docker Hub after you build it.  
-2. Change the value of the parameter 'dockerRegistryImageName' to the name of your pushed image in azuredeploy.json file (or change it during the deployment).  
+2. Change the value of the parameter 'dockerRegistryImageName' (located at azuredeploy.json file) to the name of your pushed image (or change it during the deployment).  
 3. Press this button.  
   
   [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)  
@@ -71,7 +71,7 @@ PRODUCTION_MODE     false                 <whether to set the site to production
 2. Add these application settings:  
 
 ```
-DOCKER_CUSTOM_IMAGE_NAME     <Docker image name>                  <Required>  
+DOCKER_CUSTOM_IMAGE_NAME     <Docker image name>                           <Required>  
 ADMIN_FIRSTNAME              <firstname>  
 ADMIN_LASTNAME               <lastname>  
 ADMIN_EMAIL                  <email>  
@@ -80,10 +80,10 @@ ADMIN_PASSWORD               <admin password>
 DB_NAME                      <database name>  
 DB_PASSWORD                  <database password>  
 BACKEND_FRONTNAME            <backend frontname>  
-BASE_URL                     <site base url>                       <Required>  
+BASE_URL                     <site base url>                               <Required>  
 PRODUCTION_MODE              <whether to set the site to production mode>  
 ```
-3. Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
+Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
 
 ## How To Make Optimization of your Site
 
