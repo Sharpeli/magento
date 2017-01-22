@@ -1,6 +1,5 @@
 #!/bin/bash
-
-# Set the default value
+# Set the default values for environment variables
 set_default() {
         local var="$1"
         if [ ! "${!var:-}" ]; then
@@ -21,6 +20,7 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
         set_default 'DB_NAME' 'magento'
         set_default 'DB_PASSWORD' 'password1234'
         set_default 'BACKEND_FRONTNAME' 'admin'
+        set_default 'PRODUCTION_MODE' false
 
         # Configure apache2 and PHP
         a2ensite magento.conf
@@ -49,13 +49,25 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
         # Check if magento installed successfully
         if [ -f app/etc/env.php ]; then
 
-                # Configure magento2 to use redis
+                # Configure magento2 to use redis as cache tool
                 sed -e "/'save' => 'files',/ {" -e "r /session.php" -e "d" -e "}" -i app/etc/env.php
                 sed -e "/);/ {" -e "r /page_caching.php" -e "d" -e "}" -i app/etc/env.php
 
-                # switch the magento2 mode to production, we will enable this process until it can proceed on azure web app for linux
-                # echo "switch magento to production mode..."
-                # bin/magento deploy:mode:set production
+		if [ "$PRODUCTION_MODE" = true ] ; then
+        	        # Switch the magento2 mode to production, we will enable this process until it can proceed on azure web app for linux
+               		echo "switch magento to production mode..."
+                	bin/magento deploy:mode:set production
+
+			echo "setting file permissions for production mode..."
+			find var vendor lib pub/static pub/media app/etc -type f -exec chmod g+w {} \;
+			find var vendor lib pub/static pub/media app/etc -type d -exec chmod g+w {} \;
+			chmod o+rwx app/etc/env.php
+		else
+			# Default mode
+			echo "setting file permissions for default mode..."
+			find var pub/static pub/media app/etc -type f -exec chmod g+w {} \;
+			find var pub/static pub/media app/etc -type d -exec chmod g+ws {} \;
+		fi
         fi
 fi
 
@@ -76,16 +88,6 @@ crontab -l > magentocron
 cat /cronjobs >> magentocron
 crontab magentocron
 rm magentocron
-
-echo "Changing file permissions..."
-umask u=,g=,o=
-chmod g+s var
-setfacl -R -d -m g::rwx var
-setfacl -R -d -m o::rwx var
-chmod -R 777 vendor
-chmod -R 777 app/etc
-chmod -R 777 var
-chmod -R 777 pub/static
 
 # Run apache in the foreground
 apachectl -DFOREGROUND

@@ -1,15 +1,13 @@
 # Build magento2 from ubuntu base
 FROM ubuntu:16.04
 
-ENV PACKAGE_URL https://raw.githubusercontent.com/Sharpeli/Packages/master/Magento-CE-2_1_3_tar_gz-2016-12-13-09-08-39.tar.gz
-ENV PACKAGE_NAME Magento-CE-2_1_3_tar_gz-2016-12-13-09-08-39.tar.gz
+ARG PACKAGE_URL=https://raw.githubusercontent.com/Sharpeli/Packages/master/Magento-CE-2_1_3_tar_gz-2016-12-13-09-08-39.tar.gz
 
-# Install build-essential, wget, cron, acl
+# Install build-essential, wget, cron
 RUN apt-get update \
     && apt-get install -y build-essential \
                        wget \
-		       cron \
-		       acl
+		       cron 
 
 # Install apache2 
 RUN apt-get update \ 
@@ -45,18 +43,22 @@ RUN wget http://download.redis.io/redis-stable.tar.gz \
     && make \
     && make install
 
-# Download Mangento CE 2.1.3 archive from my github repo and extract it, to download package from your URL, change the ENV PACKAGE_URL and PACKAGE_NAME
+# Download Mangento CE 2.1.3 archive from my github repo and extract it.
+# To download package from your repo, add these arguments while you build the image: --build-arg PACKAGE_URL=<your package location> PACKAGE_NAME=<your package name> 
 RUN cd /var/www \
     && mkdir magento \
-    && wget ${PACKAGE_URL} \
-    && tar -xvzf ${PACKAGE_NAME} -C ./magento \
-    && rm ${PACKAGE_NAME}
+    && wget -O magento2.tar.gz ${PACKAGE_URL} \
+    && tar -xvzf magento2.tar.gz -C ./magento \
+    && rm magento2.tar.gz
 
 # Set pre-installation file permissions
-RUN cd /var/www/magento \
-    && find var vendor pub/static pub/media app/etc -type f -exec chmod u+w {} \; \
-    && find var vendor pub/static pub/media app/etc -type d -exec chmod u+w {} \; \
-    && chmod u+x bin/magento 
+RUN usermod -g www-data root \
+    && cd /var/www/magento \
+    && find var vendor pub/static pub/media app/etc -type f -exec chmod g+w {} \; \
+    && find var vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} \; \
+    && chown -R :www-data . \
+    && chmod u+x bin/magento
+
     
 COPY magento.conf /etc/apache2/sites-available/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
