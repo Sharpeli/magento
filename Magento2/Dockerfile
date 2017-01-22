@@ -44,7 +44,7 @@ RUN wget http://download.redis.io/redis-stable.tar.gz \
     && make install
 
 # Download Mangento CE 2.1.3 archive from my github repo and extract it.
-# To download package from your repo, add these arguments while you build the image: --build-arg PACKAGE_URL=<your package location> PACKAGE_NAME=<your package name> 
+# To download package from your repo, add these arguments while you build the image: --build-arg PACKAGE_URL=<your package location> 
 RUN cd /var/www \
     && mkdir magento \
     && wget -O magento2.tar.gz ${PACKAGE_URL} \
