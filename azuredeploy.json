@@ -2,7 +2,7 @@
   "parameters": {
     "dockerRegistryImageName": {
       "type": "string",
-      "defaultValue": "sharpeli/magento:v111"
+      "defaultValue": "sharpeli/magento:v113"
     },
     "siteName": {
       "type": "string"
@@ -63,6 +63,14 @@
     "backendFrontName": {
       "type": "string",
       "defaultValue": "admin"
+    },
+    "productionMode": {
+      "type": "bool",
+      "allowedValues": [
+        true,
+        false
+      ],
+      "defaultValue": false
     }
   },
   "resources": [
@@ -111,6 +119,10 @@
             {
               "name": "BASE_URL",
               "value": "[concat('http://', parameters('siteName'), '.azurewebsites.net')]"
+            },
+            {
+              "name": "PRODUCTION_MODE",
+              "value": "[parameters('productionMode')]"
             }
           ]
         },
