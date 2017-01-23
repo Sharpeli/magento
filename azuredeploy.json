@@ -2,7 +2,7 @@
   "parameters": {
     "dockerRegistryImageName": {
       "type": "string",
-      "defaultValue": "sharpeli/magento:v113"
+      "defaultValue": "sharpeli/magento:v115"
     },
     "siteName": {
       "type": "string"
@@ -71,6 +71,18 @@
         false
       ],
       "defaultValue": false
+    },
+    "apacheUsername": {
+      "type": "string",
+      "defaultValue": "root"
+    },
+    "apachePassword": {
+      "type": "string",
+      "defaultValue": "password1234"
+    },
+    "phpmyadminPassword": {
+      "type": "string",
+      "defaultValue": "password1234"
     }
   },
   "resources": [
@@ -123,6 +135,18 @@
             {
               "name": "PRODUCTION_MODE",
               "value": "[parameters('productionMode')]"
+            },
+            {
+              "name": "APACHE_USER",
+              "value": "[parameters('apacheUsername')]"
+            },
+            {
+              "name": "APACHE_PASSWORD",
+              "value": "[parameters('apachePassword')]"
+            },
+            {
+              "name": "PHPMYADMIN_PASSWORD",
+              "value": "[parameters('phpmyadminPassword')]"
             }
           ]
         },
