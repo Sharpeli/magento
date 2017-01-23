@@ -81,10 +81,8 @@
       "defaultValue": "password1234"
     },
     "phpmyadminPassword": {
-      {
-        "type": "string",
-        "defaultValue": "password1234"
-      }
+      "type": "string",
+      "defaultValue": "password1234"
     }
   },
   "resources": [
