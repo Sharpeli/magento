@@ -10,8 +10,16 @@ set_default() {
 # Start redis in the background
 redis-server --daemonize yes
 
+# Start mysql service
+service mysql start
+
+# Start cron service
+service cron start
+
+cd /var/www/magento
+
 # The file env.php doesn't exitst means that magento hasn't been installed yet
-if [ ! -f /var/www/magento/app/etc/env.php ]; then
+if [ ! -f app/etc/env.php ]; then
         set_default 'ADMIN_FIRSTNAME' 'firstname'
         set_default 'ADMIN_LASTNAME' 'lastname'
         set_default 'ADMIN_EMAIL' 'sample@example.com'
@@ -21,19 +29,27 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
         set_default 'DB_PASSWORD' 'password1234'
         set_default 'BACKEND_FRONTNAME' 'admin'
         set_default 'PRODUCTION_MODE' false
+        set_default 'APACHE_USER' 'root'
+	set_default 'APACHE_PASSWORD' 'password1234'
+	set_default 'PHPMYADMIN_PASSWORD' 'password1234'
 
         # Configure apache2 and PHP
         a2ensite magento.conf
         a2dissite 000-default.conf
         a2enmod rewrite
         phpenmod mcrypt
+        phpenmod mbstring
+	
+	# Create username and password for apache2 authentication to secure phpmyadmin
+	htpasswd -b -c /etc/phpmyadmin/.htpasswd  $APACHE_USER $APACHE_PASSWORD       
 
         # Set mysql password and creat table for magento2
-        service mysql start
         mysqladmin -u root password $DB_PASSWORD
         mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';" --password=$DB_PASSWORD
-
-        cd /var/www/magento
+	
+	# Change phpmyadmin password according to users setting
+	mysql -u root -e "ALTER USER 'phpmyadmin'@'localhost' IDENTIFIED WITH mysql_native_password BY '$PHPMYADMIN_PASSWORD'" --password=$DB_PASSWORD
+	sed -i "s/\$dbpass=.*/\$dbpass='$PHPMYADMIN_PASSWORD';/" /etc/phpmyadmin/config-db.php	
 
         # Install the magento2
         bin/magento setup:install --admin-firstname=$ADMIN_FIRSTNAME \
@@ -46,7 +62,7 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
                                                    --backend-frontname=$BACKEND_FRONTNAME \
                                                    --base-url=$BASE_URL
 
-        # Check if magento installed successfully
+        # Check if magento2 installed successfully
         if [ -f app/etc/env.php ]; then
 
                 # Configure magento2 to use redis as cache tool
@@ -54,6 +70,7 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
                 sed -e "/);/ {" -e "r /page_caching.php" -e "d" -e "}" -i app/etc/env.php
 
 		if [ "$PRODUCTION_MODE" = true ] ; then
+
         	        # Switch the magento2 mode to production, we will enable this process until it can proceed on azure web app for linux
                		echo "switch magento to production mode..."
                 	bin/magento deploy:mode:set production
@@ -68,26 +85,18 @@ if [ ! -f /var/www/magento/app/etc/env.php ]; then
 			find var pub/static pub/media app/etc -type f -exec chmod g+w {} \;
 			find var pub/static pub/media app/etc -type d -exec chmod g+ws {} \;
 		fi
+		
+		echo "schedule cron jobs to run every minute..."
+		crontab -l > magentocron
+		cat /cronjobs >> magentocron
+		crontab magentocron
+		rm magentocron
         fi
 fi
-
-# Check if mysql is running or start it
-if ! service mysql status; then
-        service mysql start
-fi
-
-cd /var/www/magento
 
 echo "run cron jobs the first time..."
 php bin/magento cron:run
 php bin/magento cron:run
-
-echo "schedule cron jobs to run every minute..."
-service cron restart
-crontab -l > magentocron
-cat /cronjobs >> magentocron
-crontab magentocron
-rm magentocron
 
 # Run apache in the foreground
 apachectl -DFOREGROUND
