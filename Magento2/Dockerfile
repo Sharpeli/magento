@@ -29,7 +29,7 @@ RUN apt-get update \
 			  php7.0-zip \
                           php7.0-bcmath \
                           php7.0-iconv \
-			  php-gettext \
+			  php7.0-gettext \
     && sed -i 's/memory_limit = 128M/memory_limit = 2G/' /etc/php/7.0/apache2/php.ini \
     && sed -i 's/memory_limit = -1/memory_limit = 512M/' /etc/php/7.0/cli/php.ini \
 
@@ -44,6 +44,11 @@ RUN apt-get update \
     && echo "phpmyadmin phpmyadmin/mysql/app-pass password password" |debconf-set-selections \
     && echo "phpmyadmin phpmyadmin/app-password-confirm password password" | debconf-set-selections \
     && apt-get -y install phpmyadmin \
+    && sed -i "s/function StringReader(\$str='') {/function __construct(\$str='') {/" /usr/share/php/php-gettext/streams.php \
+    && sed -i "s/function FileReader(\$filename) {/function __construct(\$filename) {/" /usr/share/php/php-gettext/streams.php \
+    && sed -i "s/function CachedFileReader(\$filename) {/function __construct(\$filename) {/" /usr/share/php/php-gettext/streams.php \
+    && sed -i "s/function gettext_reader(\$Reader, \$enable_cache = true) {/function __construct(\$Reader, \$enable_cache = true) {/" /usr/share/php/php-gettext/gettext.php \
+
 
 # Install Redis
     && wget http://download.redis.io/redis-stable.tar.gz \
