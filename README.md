@@ -10,7 +10,8 @@ This is a Docker build context to build the Docker image for Magento2 CE 2.1.3 w
 3. PHP7.0
 4. Redis
 5. MySQL
-6. Magento2 CE 2.1.3
+6. phpmyadmin
+7. Magento2 CE 2.1.3
 
 #### Note:  
 1. Here we've downloaded the Magento2 CE 2.1.3 package from [Magento Tech Resource](https://magento.com/tech-resources/download) and put it to our [github repository](https://raw.githubusercontent.com/Sharpeli/Packages/master/Magento-CE-2_1_3_tar_gz-2016-12-13-09-08-39.tar.gz) which was referenced by our Dockerfile.  
@@ -37,16 +38,19 @@ $sudo docker run -t -p 80:80 -e BASE_URL=http://<your host name>/ [-e ADMIN_USER
 You may need to set environment variables to run the image, here are all the environment variables and their default values:  
 
 ```
-ADMIN_FIRSTNAME     firstname             <admin first name>
-ADMIN_LASTNAME      lastname              <admin last name>
-ADMIN_EMAIL         sample@example.com    <admin email>
-ADMIN_USER          root                  <admin user>
-ADMIN_PASSWORD      password1234          <admin password>
-DB_NAME             magento               <database name>
-DB_PASSWORD         password1234          <database password>
-BACKEND_FRONTNAME   admin                 <backend frontname>
-BASE_URL            http://127.0.0.1/     <site base url>
-PRODUCTION_MODE     false                 <whether to set the site to production mode>
+ADMIN_FIRSTNAME      firstname             <admin first name>
+ADMIN_LASTNAME       lastname              <admin last name>
+ADMIN_EMAIL          sample@example.com    <admin email>
+ADMIN_USER           root                  <admin user>
+ADMIN_PASSWORD       password1234          <admin password>
+DB_NAME              magento               <database name>
+DB_PASSWORD          password1234          <database password>
+BACKEND_FRONTNAME    admin                 <backend frontname>
+BASE_URL             http://127.0.0.1/     <site base url>
+PRODUCTION_MODE      false                 <whether to set the site to production mode>
+APACHE_USER          root                  <the user name of apache2 authentication for phpmyadmin>
+APACHE_PASSWORD      password1234          <the password of apache2 authentication for phpmyadmin>
+PHPMYADMIN_PASSWORD  password1234          <the password of phpmyadmin>
 ```
 
 ####Note:  
@@ -54,6 +58,15 @@ PRODUCTION_MODE     false                 <whether to set the site to production
 2. If the environment variables listed above haven't been set, the default values will be used, however, it's recommended to use different values for security reasons.  
 3. It's not recommended to simply use 'admin' as the value of BACKEND_FRONTNAME, for more details, see the introduction of the parameter 'backend-frontname' in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
 4. By default, the Magento2 site will be deployed with default mode, you can choose to make it deployed with production mode by set the PRODUCTION_MODE to true, for more details of Magento2 mode, plase see [here](http://devdocs.magento.com/guides/v2.0/config-guide/bootstrap/magento-modes.html).  
+
+##How to manage your MySQL database
+
+You can visit phpmyadmin page from the URL `http://<your host name>/phpmyadmin` to manage your database.  
+
+####Note:
+1. We've enabled the apache authentication for phpmyadmin, so you need to set the apache anthentication username, password and phpmyadmin password by setting the value of environment variables APACHE_USER, APACHE_PASSWORD, PHPMYADMIN_PASSWORD.  
+2. The username of phpmyadmin is `phpmyadmin`, to magante all the databases, please login to phpmyadmin with the `root` user of MySQL.   
+3. For security reasons, plase do not use default values of environment variables above.  
 
 ## How to Apply the Docker Image on Azure Web App for Linux
 
@@ -82,8 +95,11 @@ DB_PASSWORD                  <database password>
 BACKEND_FRONTNAME            <backend frontname>  
 BASE_URL                     <site base url>                               <Required>  
 PRODUCTION_MODE              <whether to set the site to production mode>  
+APACHE_USER                  <the user name of apache2 authentication for phpmyadmin>
+APACHE_PASSWORD              <the password of apache2 authentication for phpmyadmin>
+PHPMYADMIN_PASSWORD          <the password of phpmyadmin>
 ```
-Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
+If you don't set values for environment variables above, default vaules will be used. Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
 
 ## How To Make Optimization of your Site
 
