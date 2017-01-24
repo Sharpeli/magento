@@ -7,6 +7,15 @@ set_default() {
         fi
 }
 
+# Convert bool value to number output
+convert_to_num() {
+	if [ $1 = true ]; then
+		echo "1"
+	else
+		echo "0"
+	fi
+}
+
 # Start redis in the background
 redis-server --daemonize yes
 
@@ -34,11 +43,8 @@ if [ ! -f app/etc/env.php ]; then
 	set_default 'APACHE_PASSWORD' 'MS173m_QN'
 	set_default 'PHPMYADMIN_PASSWORD' 'MS173m_QN'
 	set_default 'PRODUCTION_MODE' false
-	set_default 'USE_REWRITES' '1'
-        set_default 'USE_SECURE' '0'
-	set_default 'BASE_URL_SECURE' '0'
-        set_default 'USE_SECURE_ADMIN' '0'
-	set_default 'ADMIN_USE_SECURITY_KEY' '1'    
+	set_default 'USE_REWRITES' true
+	set_default 'ADMIN_USE_SECURITY_KEY' true    
 
         # Configure apache2 and PHP
         a2ensite magento.conf
@@ -68,11 +74,8 @@ if [ ! -f app/etc/env.php ]; then
 						   --db-user=$DB_USER \
                                                    --db-password=$DB_PASSWORD \
                                                    --backend-frontname=$BACKEND_FRONTNAME \
-						   --use-rewrites=$USE_REWRITES \
-						   --use-secure=$USE_SECURE \
-						   --base-url-secure=$BASE_URL_SECURE \
-						   --use-secure-admin=$USE_SECURE_ADMIN \
-						   --admin-use-security-key=$ADMIN_USE_SECURITY_KEY \
+						   --use-rewrites=$(convert_to_num $USE_REWRITES) \
+						   --admin-use-security-key=$(convert_to_num $ADMIN_USE_SECURITY_KEY) \
 					           --base-url=$BASE_URL
 
         # Check if magento2 installed successfully
