@@ -9,7 +9,7 @@ set_default() {
 
 # Convert bool value to number output
 convert_to_num() {
-	if [ $1 = true ]; then
+	if [ ${1,,} = "true" ]; then
 		echo "1"
 	else
 		echo "0"
@@ -42,9 +42,9 @@ if [ ! -f app/etc/env.php ]; then
         set_default 'APACHE_USER' 'apache'
 	set_default 'APACHE_PASSWORD' 'MS173m_QN'
 	set_default 'PHPMYADMIN_PASSWORD' 'MS173m_QN'
-	set_default 'PRODUCTION_MODE' false
-	set_default 'USE_REWRITES' true
-	set_default 'ADMIN_USE_SECURITY_KEY' true    
+	set_default 'PRODUCTION_MODE' 'false'
+	set_default 'USE_REWRITES' 'true'
+	set_default 'ADMIN_USE_SECURITY_KEY' 'true'    
 
         # Configure apache2 and PHP
         a2ensite magento.conf
@@ -85,7 +85,7 @@ if [ ! -f app/etc/env.php ]; then
                 sed -e "/'save' => 'files',/ {" -e "r /session.php" -e "d" -e "}" -i app/etc/env.php
                 sed -e "/);/ {" -e "r /page_caching.php" -e "d" -e "}" -i app/etc/env.php
 
-		if [ "$PRODUCTION_MODE" = true ] ; then
+		if [ "${PRODUCTION_MODE,,}" = "true" ] ; then
 
         	        # Switch the magento2 mode to production, we will enable this process until it can proceed on azure web app for linux
                		echo "switch magento to production mode..."
