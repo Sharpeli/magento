@@ -64,6 +64,7 @@ PRODUCTION_MODE      false                   <whether to set the site to product
 4. By default, the Magento2 site will be deployed with default mode, you can choose to make it deployed with production mode by set the PRODUCTION_MODE to true, for more details of Magento2 mode, plase see [here](http://devdocs.magento.com/guides/v2.0/config-guide/bootstrap/magento-modes.html).  
 5. The environment variables DB_NAME, DB_USER and DB_PASSWORD are used for magento database, changing password for magento database from phpmyadmin panel during website running will cause database connection error.  
 6. For more details of the environment variables USE_REWRITES and ADMIN_USE_SECURITY_KEY, please see the introduction of the parameters 'use-rewrites' and `admin-use-security-key` in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
+7. The password must be complex enough to meet the requirement for Magento2 and MySQL, or all the applications cannot be run normally.  
 
 ##How to manage your MySQL database
 
@@ -71,10 +72,11 @@ You can visit phpmyadmin page from the URL `http://<your host name>/phpmyadmin` 
 
 ####Note:
 1. We've enabled the apache authentication for phpmyadmin, so you need to set the apache anthentication username, password and phpmyadmin password by setting the value of environment variables APACHE_USER, APACHE_PASSWORD, PHPMYADMIN_PASSWORD.  
-2. The username of phpmyadmin is `phpmyadmin`, to magante all the databases, please login to phpmyadmin with the `root` user of MySQL.   
-3. For security reasons, plase do not use default values of environment variables above.  
-4. You can login to phpmyadmin with these 3 uers: `root`, `phpmyadmin` and `<magento database user>`, for security reasons, please set different passwords for them.  
-5. changing password of magento database from phpmyadmin panel during website running will cause database connection error, because the application use it to connect to database.  
+2. The website cannot run if your password complexity cannot meet the requirement of MySQL.  
+3. The username of phpmyadmin is `phpmyadmin`, to magante all the databases, please login to phpmyadmin with the `root` user of MySQL.   
+4. For security reasons, plase do not use default values of environment variables above.  
+5. You can login to phpmyadmin with these 3 uers: `root`, `phpmyadmin` and `<magento database user>`, for security reasons, please set different passwords for them.  
+6. changing password of magento database from phpmyadmin panel during website running will cause database connection error, because the application use it to connect to database.  
 
 ## How to Apply the Docker Image on Azure Web App for Linux
 
@@ -113,8 +115,9 @@ PRODUCTION_MODE              <whether to set the site to production mode>
 ```
 #####Note:
 1. If you don't set values for environment variables above, default vaules will be used.  
-2. Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
-3. The environment variables set in application settings will be read by the docker container at the first running, so modification during the website running is noeffective.  
+2. The website cannot run if your password complexity cannot meet the requirement of Magento2 and MySQL.  
+3. Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
+4. The environment variables set in application settings will be read by the docker container at the first running, so modification during the website running is noeffective.  
 
 ## How To Make Optimization of your Site
 
