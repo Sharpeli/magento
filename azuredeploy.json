@@ -2,7 +2,7 @@
   "parameters": {
     "dockerRegistryImageName": {
       "type": "string",
-      "defaultValue": "sharpeli/magento:v115"
+      "defaultValue": "sharpeli/magento:v116"
     },
     "siteName": {
       "type": "string"
@@ -44,25 +44,61 @@
       "type": "string",
       "defaultValue": "sample@example.com"
     },
-    "adminUserName": {
+    "adminUsername": {
       "type": "string",
       "defaultValue": "root"
     },
     "adminPassword": {
-      "type": "string",
-      "defaultValue": "password1234"
+      "type": "securestring",
+      "defaultValue": "MS173m_QN"
     },
-    "dataBaseName": {
+    "databaseName": {
       "type": "string",
       "defaultValue": "magento"
     },
-    "dataBasePassword": {
+    "databaseUsername": {
       "type": "string",
-      "defaultValue": "password1234"
+      "defaultValue": "magento"
+    },
+    "databasePassword": {
+      "type": "securestring",
+      "defaultValue": "MS173m_QN"
+    },
+    "mysqlRootPassword": {
+      "type": "securestring",
+      "defaultValue": "MS173m_QN"
     },
     "backendFrontName": {
       "type": "string",
-      "defaultValue": "admin"
+      "defaultValue": "admin_1qn"
+    },
+    "apacheUsername": {
+      "type": "string",
+      "defaultValue": "apache"
+    },
+    "apachePassword": {
+      "type": "securestring",
+      "defaultValue": "MS173m_QN"
+    },
+    "phpmyadminPassword": {
+      "type": "securestring",
+      "defaultValue": "MS173m_QN"
+    },
+    "useRewrites": {
+      "type": "bool",
+      "allowedValues": [
+        true,
+        false
+      ],
+      "defaultValue": true
+    },
+    "adminUseSecurityKey": {
+      "type": "bool",
+      "allowedValues": [
+        true,
+        false
+      ],
+      "defaultValue": true
     },
     "productionMode": {
       "type": "bool",
@@ -71,18 +107,6 @@
         false
       ],
       "defaultValue": false
-    },
-    "apacheUsername": {
-      "type": "string",
-      "defaultValue": "root"
-    },
-    "apachePassword": {
-      "type": "string",
-      "defaultValue": "password1234"
-    },
-    "phpmyadminPassword": {
-      "type": "string",
-      "defaultValue": "password1234"
     }
   },
   "resources": [
@@ -110,7 +134,7 @@
             },
             {
               "name": "ADMIN_USER",
-              "value": "[parameters('adminUserName')]"
+              "value": "[parameters('adminUsername')]"
             },
             {
               "name": "ADMIN_PASSWORD",
@@ -118,23 +142,23 @@
             },
             {
               "name": "DB_NAME",
-              "value": "[parameters('dataBaseName')]"
+              "value": "[parameters('databaseName')]"
+            },
+            {
+              "name": "DB_USER",
+              "value": "[parameters('databaseUsername')]"
             },
             {
               "name": "DB_PASSWORD",
-              "value": "[parameters('dataBasePassword')]"
+              "value": "[parameters('databasePassword')]"
+            },
+            {
+              "name": "MYSQL_ROOT_PASWORD",
+              "value": "[parameters('mysqlRootPassword')]"
             },
             {
               "name": "BACKEND_FRONTNAME",
               "value": "[parameters('backendFrontName')]"
-            },
-            {
-              "name": "BASE_URL",
-              "value": "[concat('http://', parameters('siteName'), '.azurewebsites.net')]"
-            },
-            {
-              "name": "PRODUCTION_MODE",
-              "value": "[parameters('productionMode')]"
             },
             {
               "name": "APACHE_USER",
@@ -147,6 +171,22 @@
             {
               "name": "PHPMYADMIN_PASSWORD",
               "value": "[parameters('phpmyadminPassword')]"
+            },
+            {
+              "name": "USE_REWRITES",
+              "value": "[parameters('useRewrites')]"
+            },
+            {
+              "name": "ADMIN_USE_SECURITY_KEY",
+              "value": "[parameters('adminUseSecurityKey')]"
+            },
+            {
+              "name": "PRODUCTION_MODE",
+              "value": "[parameters('productionMode')]"
+            },
+            {
+              "name": "BASE_URL",
+              "value": "[concat('http://', parameters('siteName'), '.azurewebsites.net')]"
             }
           ]
         },
