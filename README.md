@@ -73,8 +73,8 @@ You can visit phpmyadmin page from the URL `http://<your host name>/phpmyadmin` 
 1. We've enabled the apache authentication for phpmyadmin, so you need to set the apache anthentication username, password and phpmyadmin password by setting the value of environment variables APACHE_USER, APACHE_PASSWORD, PHPMYADMIN_PASSWORD.  
 2. The username of phpmyadmin is `phpmyadmin`, to magante all the databases, please login to phpmyadmin with the `root` user of MySQL.   
 3. For security reasons, plase do not use default values of environment variables above.  
-4. You can login to phpmyadmin with these 3 uers: `root`, `phpmyadmin` and `<magento database user>`, for security reasons, please set different passwords for them;  
-5. changing password for magento database from phpmyadmin panel during website running will cause database connection error, because the application use it to making connection to database.  
+4. You can login to phpmyadmin with these 3 uers: `root`, `phpmyadmin` and `<magento database user>`, for security reasons, please set different passwords for them.  
+5. changing password of magento database from phpmyadmin panel during website running will cause database connection error, because the application use it to connect to database.  
 
 ## How to Apply the Docker Image on Azure Web App for Linux
 
