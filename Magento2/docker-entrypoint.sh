@@ -24,14 +24,21 @@ if [ ! -f app/etc/env.php ]; then
         set_default 'ADMIN_LASTNAME' 'lastname'
         set_default 'ADMIN_EMAIL' 'sample@example.com'
         set_default 'ADMIN_USER' 'root'
-        set_default 'ADMIN_PASSWORD' 'password1234'
+        set_default 'ADMIN_PASSWORD' 'MS173m_QN'
         set_default 'DB_NAME' 'magento'
-        set_default 'DB_PASSWORD' 'password1234'
-        set_default 'BACKEND_FRONTNAME' 'admin'
-        set_default 'PRODUCTION_MODE' false
-        set_default 'APACHE_USER' 'root'
-	set_default 'APACHE_PASSWORD' 'password1234'
-	set_default 'PHPMYADMIN_PASSWORD' 'password1234'
+        set_default 'DB_USER' 'magento'
+        set_default 'DB_PASSWORD' 'MS173m_QN'
+        set_default 'MYSQL_ROOT_PASWORD' 'MS173m_QN'
+        set_default 'BACKEND_FRONTNAME' 'admin_1qn'
+        set_default 'APACHE_USER' 'apache'
+	set_default 'APACHE_PASSWORD' 'MS173m_QN'
+	set_default 'PHPMYADMIN_PASSWORD' 'MS173m_QN'
+	set_default 'PRODUCTION_MODE' false
+	set_default 'USE_REWRITES' '1'
+        set_default 'USE_SECURE' '0'
+	set_default 'BASE_URL_SECURE' '0'
+        set_default 'USE_SECURE_ADMIN' '0'
+	set_default 'ADMIN_USE_SECURITY_KEY' '1'    
 
         # Configure apache2 and PHP
         a2ensite magento.conf
@@ -44,11 +51,11 @@ if [ ! -f app/etc/env.php ]; then
 	htpasswd -b -c /etc/phpmyadmin/.htpasswd  $APACHE_USER $APACHE_PASSWORD       
 
         # Set mysql password and creat table for magento2
-        mysqladmin -u root password $DB_PASSWORD
-        mysql -u root -e "create database magento; GRANT ALL ON magento.* TO magento@localhost IDENTIFIED BY 'magento';" --password=$DB_PASSWORD
+        mysqladmin -u root password $MYSQL_ROOT_PASWORD
+        mysql -u root -e "create database $DB_NAME; GRANT ALL ON $DB_NAME.* TO $DB_USER@localhost IDENTIFIED BY '$DB_PASSWORD';" --password=$MYSQL_ROOT_PASWORD
 	
 	# Change phpmyadmin password according to users setting
-	mysql -u root -e "ALTER USER 'phpmyadmin'@'localhost' IDENTIFIED WITH mysql_native_password BY '$PHPMYADMIN_PASSWORD'" --password=$DB_PASSWORD
+	mysql -u root -e "ALTER USER 'phpmyadmin'@'localhost' IDENTIFIED WITH mysql_native_password BY '$PHPMYADMIN_PASSWORD'" --password=$MYSQL_ROOT_PASWORD
 	sed -i "s/\$dbpass=.*/\$dbpass='$PHPMYADMIN_PASSWORD';/" /etc/phpmyadmin/config-db.php	
 
         # Install the magento2
@@ -58,9 +65,15 @@ if [ ! -f app/etc/env.php ]; then
                                                    --admin-user=$ADMIN_USER \
                                                    --admin-password=$ADMIN_PASSWORD \
                                                    --db-name=$DB_NAME \
+						   --db-user=$DB_USER \
                                                    --db-password=$DB_PASSWORD \
                                                    --backend-frontname=$BACKEND_FRONTNAME \
-                                                   --base-url=$BASE_URL
+						   --use-rewrites=$USE_REWRITES \
+						   --use-secure=$USE_SECURE \
+						   --base-url-secure=$BASE_URL_SECURE \
+						   --use-secure-admin=$USE_SECURE_ADMIN \
+						   --admin-use-security-key=$ADMIN_USE_SECURITY_KEY \
+					           --base-url=$BASE_URL
 
         # Check if magento2 installed successfully
         if [ -f app/etc/env.php ]; then
