@@ -38,26 +38,33 @@ $sudo docker run -t -p 80:80 -e BASE_URL=http://<your host name>/ [-e ADMIN_USER
 You may need to set environment variables to run the image, here are all the environment variables and their default values:  
 
 ```
-ADMIN_FIRSTNAME      firstname             <admin first name>
-ADMIN_LASTNAME       lastname              <admin last name>
-ADMIN_EMAIL          sample@example.com    <admin email>
-ADMIN_USER           root                  <admin user>
-ADMIN_PASSWORD       password1234          <admin password>
-DB_NAME              magento               <database name>
-DB_PASSWORD          password1234          <database password>
-BACKEND_FRONTNAME    admin                 <backend frontname>
-BASE_URL             http://127.0.0.1/     <site base url>
-PRODUCTION_MODE      false                 <whether to set the site to production mode>
-APACHE_USER          root                  <the user name of apache2 authentication for phpmyadmin>
-APACHE_PASSWORD      password1234          <the password of apache2 authentication for phpmyadmin>
-PHPMYADMIN_PASSWORD  password1234          <the password of phpmyadmin>
+ADMIN_FIRSTNAME        firstname             <admin first name>
+ADMIN_LASTNAME         lastname              <admin last name>
+ADMIN_EMAIL            sample@example.com    <admin email>
+ADMIN_USER             root                  <admin user>
+ADMIN_PASSWORD         MS173m_QN             <admin password>
+DB_NAME                magento               <database name for magento>
+DB_USER                magento               <database user name for magento>
+DB_PASSWORD            MS173m_QN             <database password for magento>
+MYSQL_ROOT_PASWORD     MS173m_QN             <the password of MySQL root user>
+BACKEND_FRONTNAME      admin                 <backend frontname>
+APACHE_USER            apache                <the user name of apache2 authentication for phpmyadmin>
+APACHE_PASSWORD        MS173m_QN             <the password of apache2 authentication for phpmyadmin>
+PHPMYADMIN_PASSWORD    MS173m_QN             <the password of phpmyadmin>
+BASE_URL               http://127.0.0.1/     <site base url>
+USE_REWRITES           true                  <whether to use web server rewrites for generated links>
+ADMIN_USE_SECURITY_KEY true                  <whether to use a randomly generated key value to access pages in the Magento Admin and in forms>
+PRODUCTION_MODE      false                   <whether to set the site to production mode>
 ```
 
 ####Note:  
-1. The variable BASE_URL must be set the same with your host name to avoid issues on accessing the Magento2 Admin Panel, for more details, please see the introduction of the parameter 'base-url' in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
+1. The variable BASE_URL must be set the same with your host name to avoid issues on accessing the Magento2 Admin Panel, for more details, please see the introduction of the parameter `base-url` in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
 2. If the environment variables listed above haven't been set, the default values will be used, however, it's recommended to use different values for security reasons.  
-3. It's not recommended to simply use 'admin' as the value of BACKEND_FRONTNAME, for more details, see the introduction of the parameter 'backend-frontname' in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
+3. It's not recommended to simply use 'admin' as the value of BACKEND_FRONTNAME, for more details, see the introduction of the parameter `backend-frontname` in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
 4. By default, the Magento2 site will be deployed with default mode, you can choose to make it deployed with production mode by set the PRODUCTION_MODE to true, for more details of Magento2 mode, plase see [here](http://devdocs.magento.com/guides/v2.0/config-guide/bootstrap/magento-modes.html).  
+5. The environment variables DB_NAME, DB_USER and DB_PASSWORD are used for magento database, changing password for magento database from phpmyadmin panel during website running will cause database connection error.  
+6. For more details of the environment variables USE_REWRITES and ADMIN_USE_SECURITY_KEY, please see the introduction of the parameters 'use-rewrites' and `admin-use-security-key` in [Magento2 command line installation instruction](http://devdocs.magento.com/guides/v2.0/install-gde/install/cli/install-cli-install.html).  
+7. The password must be complex enough to meet the requirement for Magento2 and MySQL, or all the applications cannot be run normally.  
 
 ##How to manage your MySQL database
 
@@ -65,8 +72,11 @@ You can visit phpmyadmin page from the URL `http://<your host name>/phpmyadmin` 
 
 ####Note:
 1. We've enabled the apache authentication for phpmyadmin, so you need to set the apache anthentication username, password and phpmyadmin password by setting the value of environment variables APACHE_USER, APACHE_PASSWORD, PHPMYADMIN_PASSWORD.  
-2. The username of phpmyadmin is `phpmyadmin`, to magante all the databases, please login to phpmyadmin with the `root` user of MySQL.   
-3. For security reasons, plase do not use default values of environment variables above.  
+2. The website cannot run if your password complexity cannot meet the requirement of MySQL.  
+3. The username of phpmyadmin is `phpmyadmin`, to magante all the databases, please login to phpmyadmin with the `root` user of MySQL.   
+4. For security reasons, plase do not use default values of environment variables above.  
+5. You can login to phpmyadmin with these 3 uers: `root`, `phpmyadmin` and `<magento database user>`, for security reasons, please set different passwords for them.  
+6. changing password of magento database from phpmyadmin panel during website running will cause database connection error, because the application use it to connect to database.  
 
 ## How to Apply the Docker Image on Azure Web App for Linux
 
@@ -81,25 +91,33 @@ You can visit phpmyadmin page from the URL `http://<your host name>/phpmyadmin` 
 #### Deploy Azure Web App with Docker Image Manually
 
 1. Create the resource Azure web app on Linux (Preview).  
-2. Add these application settings:  
+2. Add these application settings from azure portal:  
 
 ```
-DOCKER_CUSTOM_IMAGE_NAME     <Docker image name>                           <Required>  
-ADMIN_FIRSTNAME              <firstname>  
-ADMIN_LASTNAME               <lastname>  
-ADMIN_EMAIL                  <email>  
-ADMIN_USER                   <admin username>  
-ADMIN_PASSWORD               <admin password>  
-DB_NAME                      <database name>  
-DB_PASSWORD                  <database password>  
-BACKEND_FRONTNAME            <backend frontname>  
-BASE_URL                     <site base url>                               <Required>  
-PRODUCTION_MODE              <whether to set the site to production mode>  
+DOCKER_CUSTOM_IMAGE_NAME     <Docker image name>                               <Required>  
+ADMIN_FIRSTNAME              <admin first name>
+ADMIN_LASTNAME               <admin last name>
+ADMIN_EMAIL                  <admin email>
+ADMIN_USER                   <admin user>
+ADMIN_PASSWORD               <admin password>
+DB_NAME                      <database name for magento>
+DB_USER                      <database user name for magento>
+DB_PASSWORD                  <database password for magento>
+MYSQL_ROOT_PASWORD           <the password of MySQL root user>
+BACKEND_FRONTN               <backend frontname>
 APACHE_USER                  <the user name of apache2 authentication for phpmyadmin>
 APACHE_PASSWORD              <the password of apache2 authentication for phpmyadmin>
 PHPMYADMIN_PASSWORD          <the password of phpmyadmin>
+BASE_URL                     <site base url>                                   <Required>
+USE_REWRITES                 <whether to use web server rewrites for generated links>
+ADMIN_USE_SECURITY_KEY       <whether to use a randomly generated key value to access pages in the Magento Admin and in forms>
+PRODUCTION_MODE              <whether to set the site to production mode>
 ```
-If you don't set values for environment variables above, default vaules will be used. Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
+#####Note:
+1. If you don't set values for environment variables above, default vaules will be used.  
+2. The website cannot run if your password complexity cannot meet the requirement of Magento2 and MySQL.  
+3. Your Docker image will be pulled and run while the first request reach the server, so the cold start process will be quite long.  
+4. The environment variables set in application settings will be read by the docker container at the first running, so modification during the website running is noeffective.  
 
 ## How To Make Optimization of your Site
 
