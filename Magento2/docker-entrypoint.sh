@@ -83,7 +83,7 @@ if [ ! -f app/etc/env.php ]; then
 
                 # Configure magento2 to use redis as cache tool
 		php /redis.php
-		sed -i '1 s/^.*$/return array (/g' /env-tmp.php
+		sed -i '1s/.*/return array (/' /env-tmp.php
 		sed -i.bak '$s/$/;/' /env-tmp.php
 		sed -i '1 i\<?php' /env-tmp.php
 		cat /env-tmp.php > app/etc/env.php
