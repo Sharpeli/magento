@@ -76,12 +76,11 @@ RUN apt-get update \
     
 COPY magento.conf /etc/apache2/sites-available/
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-COPY session.php /session.php
-COPY page_caching.php /page_caching.php
 COPY cronjobs /cronjobs
 COPY phpmyadmin.conf /etc/apache2/conf-available/phpmyadmin.conf
 COPY phpmyadmin.conf /etc/apache2/conf-enabled/phpmyadmin.conf
 COPY phpmyadmin-access /usr/share/phpmyadmin/.htaccess
+COPY redis.php /redis.php
 
 # Change permissions for docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
