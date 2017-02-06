@@ -41,14 +41,16 @@ if [ ! -f app/etc/env.php ]; then
         set_default 'USE_REWRITES' 'true'
         set_default 'ADMIN_USE_SECURITY_KEY' 'true'
 		
-	# if the environment variable MYSQLCONNSTR_defaultConnection has value, the magento site will use it as connection string to access mysql database, else the mysql in the image will be used
+	# If the environment variable MYSQLCONNSTR_defaultConnection has a value, the magento site will use it as connection string to access mysql database, else the mysql in the image will be used
 	if [ ! -z "$MYSQLCONNSTR_defaultConnection" ]; then
 	      	export DB_HOST=$(echo $MYSQLCONNSTR_defaultConnection | perl -nle 'm/^.*Data Source=(.+?);.*$/; print $1')
 		export DB_NAME=$(echo $MYSQLCONNSTR_defaultConnection | perl -nle 'm/^.*Database=(.+?);.*$/; print $1')
 		export DB_USER=$(echo $MYSQLCONNSTR_defaultConnection | perl -nle 'm/^.*User Id=(.+?);.*$/; print $1')
 		export DB_PASSWORD=$(echo $MYSQLCONNSTR_defaultConnection | perl -nle 'm/^.*Password=(.+?)$/; print $1')
         else
-		export DB_HOST=localhost
+		
+		# else use mysql in the container and set password for root, magento and phpmyadmin
+		export DB_HOST='localhost'
 		set_default 'DB_NAME' 'magento'
 		set_default 'DB_USER' 'magento'
 		set_default 'DB_PASSWORD' 'MS173m_QN'
