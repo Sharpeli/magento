@@ -152,8 +152,8 @@ Content Delivery Network (CDN) is a special system that can connect all cache se
 Go to admin portal, Stores -> Configuration > General > Web > Base URLs (Secure)  
 ![alt text](https://github.com/Sharpeli/Packages/blob/master/magento-optimization-images/magento-optimization-cdn.png)  
 
-## Limitaions
+## Limitations
 
-### Limitaions on Applying to Azure Web App On Linux
+### Limitations on Applying to Azure Web App On Linux
 
 It may cause unexpect issues to scale out your App Service Plan to more than `1` instances if your App use storage tools like `MySQL` and `Redis` in the Docker container. Since several instances of Docker container will be created after App Service Plan scaled out to mutiple instances, and every instance of Docker container will have `1` MySQL server in it, it's hard to synchronize data in serveral database servers. As a result, we recommend you use `1` instance of App Service Plan if you are using `MySQL` or `Redis` in the Docker container, to scale out you would need to use Cleardb or external MySQL server.  
