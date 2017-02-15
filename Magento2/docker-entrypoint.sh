@@ -93,18 +93,18 @@ if [ ! -f app/etc/env.php ]; then
 		rm /env-tmp.php		 
 
 		if [ "${PRODUCTION_MODE,,}" = "true" ] ; then
-		
-			echo "setting file permissions for production mode..."
-                        find var vendor lib pub/static pub/media app/etc -type f -exec chmod g+w {} \;
-                        find var vendor lib pub/static pub/media app/etc -type d -exec chmod g+w {} \;
-                        chmod o+rwx app/etc/env.php
 	
         	        # Switch the magento2 mode to production, we will enable this process until it can proceed on azure web app for linux
                		echo "switch magento to production mode..."
                 	bin/magento deploy:mode:set production
-
-			# disable the magento maintance mode
+			
+			# Disable the magento maintance mode
                         bin/magento maintenance:disable
+
+			echo "setting file permissions for production mode..."
+                        find var vendor lib pub/static pub/media app/etc -type f -exec chmod g+w {} \;
+                        find var vendor lib pub/static pub/media app/etc -type d -exec chmod g+w {} \;
+                        chmod o+rwx app/etc/env.php
 		else
 			# Default mode
 			echo "setting file permissions for default mode..."
