@@ -2,7 +2,7 @@
   "parameters": {
     "dockerRegistryImageName": {
       "type": "string",
-      "defaultValue": "sharpeli/magento:v116"
+      "defaultValue": "sharpeli/magento:v120"
     },
     "siteName": {
       "type": "string"
