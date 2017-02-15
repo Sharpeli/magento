@@ -16,6 +16,9 @@ convert_to_num() {
 	fi
 }
 
+# Start apache2
+service apache2 start
+
 # Start redis in the background
 redis-server --daemonize yes
 
@@ -90,15 +93,18 @@ if [ ! -f app/etc/env.php ]; then
 		rm /env-tmp.php		 
 
 		if [ "${PRODUCTION_MODE,,}" = "true" ] ; then
-
+		
+			echo "setting file permissions for production mode..."
+                        find var vendor lib pub/static pub/media app/etc -type f -exec chmod g+w {} \;
+                        find var vendor lib pub/static pub/media app/etc -type d -exec chmod g+w {} \;
+                        chmod o+rwx app/etc/env.php
+	
         	        # Switch the magento2 mode to production, we will enable this process until it can proceed on azure web app for linux
                		echo "switch magento to production mode..."
                 	bin/magento deploy:mode:set production
 
-			echo "setting file permissions for production mode..."
-			find var vendor lib pub/static pub/media app/etc -type f -exec chmod g+w {} \;
-			find var vendor lib pub/static pub/media app/etc -type d -exec chmod g+w {} \;
-			chmod o+rwx app/etc/env.php
+			# disable the magento maintance mode
+                        bin/magento maintenance:disable
 		else
 			# Default mode
 			echo "setting file permissions for default mode..."
@@ -118,5 +124,8 @@ echo "run cron jobs the first time..."
 php bin/magento cron:run
 php bin/magento cron:run
 
-# Run apache in the foreground
-apachectl -DFOREGROUND
+# Restart apache to make configurations above take into effect
+service apache2 stop
+
+# Run apache in the foreground 
+apachectl -DFOREGROUND 
