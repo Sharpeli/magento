@@ -120,9 +120,9 @@ PRODUCTION_MODE              <whether to set the site to production mode>
 ```
 
 #### Process to Run Docker Container On Azure Web App Service
-##### 1. Deploy your site with procedures above
-Make sure your application settings of your web app are all conform the rules.  
-##### 2. Visit your website from a broswer and wait
+##### 1. Deploy the site with procedures above
+Make sure the application settings of the web app are all conform the rules.  
+##### 2. Visit the website from a broswer and wait
 The Docker image will be pulled and run while the first request reach the server according to the value of `DOCKER_CUSTOM_IMAGE_NAME`, so you have to wait the web broswer to show the website page.   
 ##### 3. See the Notice page
 It will take less than 1 minute to show this page, it means the docker container has been run and the apache server has been enabled.  
