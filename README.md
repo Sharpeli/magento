@@ -129,11 +129,11 @@ It will take less than 1 minute to show this page, it means the docker container
 ![alt text](https://raw.githubusercontent.com/Sharpeli/Packages/master/magento-optimization-images/magento-apache-enabled.png)  
   
 ##### 4. Wait for several minutes and refresh the Notice Page
-3. If you choose not to deploy Magento to production mode by setting `PRODUCTION_MODE` to false, you need to wait for about 3 minutes and refresh the web page to see Magento home page, however, if you choose to deploy Magento to production mode, for the time costing of switching to production mode, you have to wait for about 8 minutes and refresh the web page to see the Magento home page.  
+If you choose not to deploy Magento to production mode by setting `PRODUCTION_MODE` to false, you need to wait for about 3 minutes and refresh the web page to see Magento home page, however, if you choose to deploy Magento to production mode, for the time costing of switching to production mode, you have to wait for about 8 minutes and refresh the web page to see the Magento home page.  
 ![alt text](https://raw.githubusercontent.com/Sharpeli/Packages/master/magento-optimization-images/magento-home-page.PNG)  
 
 ##### 5. That's it
-4. If the Magento home page shows, you can try to visit the admin portal to check if the Magento run normally, what's more, you can optimize your website according to the tutorials below.  
+If the Magento home page shows, you can try to visit the admin portal to check if the Magento run normally, what's more, you can optimize your website according to the tutorials below.  
 
 #####Note:
 1. If you don't set values for environment variables above, default vaules will be used.  
