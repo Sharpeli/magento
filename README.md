@@ -20,6 +20,12 @@ This is a Docker build context to build the Docker image for Magento2 CE 2.1.3 w
    1. Please ensure that the package you download is from [Magento Tech Resource](https://magento.com/tech-resources/download) and the format of the package is Magento Community Edition 2.1.3.tar.gz.  
    2. You need to login with your account to download the Magento2 CE 2.1.3 package from [Magento Tech Resource](https://magento.com/tech-resources/download).  
 
+#### Limitations
+
+##### Limitations on Applying This Image to Azure Web App On Linux
+
+It may cause unexpect issues to scale out your App Service Plan to more than `1` instances if your App use storage tools like `MySQL` and `Redis` in the Docker container. Since several instances of Docker container will be created after App Service Plan scaled out to mutiple instances, and every instance of Docker container will have `1` MySQL server in it, it's hard to synchronize data in serveral database servers. As a result, we recommend you use `1` instance of App Service Plan if you are using `MySQL` or `Redis` in the Docker container, to scale out you would need to use Cleardb or external MySQL server.  
+
 ## How to Build the Image
 
 At the same directory level with Dockerfile, run the command:
@@ -94,7 +100,7 @@ You can visit phpmyadmin page from the URL `http://<your host name>/phpmyadmin` 
 2. Add these application settings from azure portal:  
 
 ```
-DOCKER_CUSTOM_IMAGE_NAME     <Docker image name>                               <Required>  
+DOCKER_CUSTOM_IMAGE_NAME     <Docker image name in Docker Hub>                               <Required>  
 ADMIN_FIRSTNAME              <admin first name>
 ADMIN_LASTNAME               <admin last name>
 ADMIN_EMAIL                  <admin email>
@@ -108,11 +114,28 @@ BACKEND_FRONTN               <backend frontname>
 APACHE_USER                  <the user name of apache2 authentication for phpmyadmin>
 APACHE_PASSWORD              <the password of apache2 authentication for phpmyadmin>
 PHPMYADMIN_PASSWORD          <the password of phpmyadmin>
-BASE_URL                     <site base url>                                   <Required>
+BASE_URL                     <site base url>                                                 <Required>
 USE_REWRITES                 <whether to use web server rewrites for generated links>
 ADMIN_USE_SECURITY_KEY       <whether to use a randomly generated key value to access pages in the Magento Admin and in forms>
 PRODUCTION_MODE              <whether to set the site to production mode>
 ```
+
+#### Process to Run Docker Container On Azure Web App Service
+##### Deploy your site with procedures above
+Make sure your application settings of your web app are all conform the rules.  
+##### Visit your website from a broswer and wait  
+1. The Docker image will be pulled and run while the first request reach the server according to the value of `DOCKER_CUSTOM_IMAGE_NAME`, so you have to wait the web broswer to show the site page.  
+##### See an Notice page   
+2. It will take less than 1 minute to show this page, it means the docker container has been run and the apache server has been enabled.  
+![alt text](https://raw.githubusercontent.com/Sharpeli/Packages/master/magento-optimization-images/magento-apache-enabled.png)  
+  
+##### Wait for several minutes and refresh the Notice Page  
+3. If you choose not to deploy Magento to production mode by setting `PRODUCTION_MODE` to false, you need to wait for about 3 minutes and refresh the web page to see Magento home page, however, if you choose to deploy Magento to production mode, for the time costing of switching to production mode, you have to wait for about 8 minutes and refresh the web page to show the Magento home page.  
+![alt text](https://raw.githubusercontent.com/Sharpeli/Packages/master/magento-optimization-images/magento-home-page.PNG)  
+
+##### That's it
+4. If the Magento home page show, you can try to visit the admin portal to check if the Magento run normally, what's more, you can optimize your website according to the tutorials below.  
+
 #####Note:
 1. If you don't set values for environment variables above, default vaules will be used.  
 2. The website cannot run if your password complexity cannot meet the requirement of Magento2 and MySQL.  
@@ -123,7 +146,7 @@ PRODUCTION_MODE              <whether to set the site to production mode>
 
 #### Enable Flat Categories and Products
 
-Go to the admin panel, STORES -> Configuration -> CATALOG -> Catalog -> Use Flat Catalog Category  and put “Yes” .  
+Go to the admin panel, STORES -> Configuration -> CATALOG -> Catalog -> Use Flat Catalog Category  and put `Yes` .  
 ![alt text](https://raw.githubusercontent.com/Sharpeli/Packages/master/magento-optimization-images/magento-optimization-catalog.png)
 
 #### Merge CSS and JS Files
@@ -151,9 +174,3 @@ Content Delivery Network (CDN) is a special system that can connect all cache se
 
 Go to admin portal, Stores -> Configuration > General > Web > Base URLs (Secure)  
 ![alt text](https://github.com/Sharpeli/Packages/blob/master/magento-optimization-images/magento-optimization-cdn.png)  
-
-## Limitations
-
-### Limitations on Applying to Azure Web App On Linux
-
-It may cause unexpect issues to scale out your App Service Plan to more than `1` instances if your App use storage tools like `MySQL` and `Redis` in the Docker container. Since several instances of Docker container will be created after App Service Plan scaled out to mutiple instances, and every instance of Docker container will have `1` MySQL server in it, it's hard to synchronize data in serveral database servers. As a result, we recommend you use `1` instance of App Service Plan if you are using `MySQL` or `Redis` in the Docker container, to scale out you would need to use Cleardb or external MySQL server.  
