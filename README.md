@@ -2,6 +2,11 @@
 
 This is a Docker build context to build the Docker image for Magento2 CE 2.1.3 which contains all the running prerequisite ( Apache2, PHP7.0, MySQL, Redis).  
   
+## Limitations
+
+### Limitations on Applying This Image to Azure Web App On Linux
+
+It may cause unexpect issues to scale out your App Service Plan to more than `1` instances if your App use storage tools like `MySQL` and `Redis` in the Docker container. Since several instances of Docker container will be created after App Service Plan scaled out to mutiple instances, and every instance of Docker container will have `1` MySQL server in it, it's hard to synchronize data in serveral database servers. As a result, we recommend you use `1` instance of App Service Plan if you are using `MySQL` or `Redis` in the Docker container, to scale out you would need to use Cleardb or external MySQL server.  
 
 ## What the Docker Image Contains
 
@@ -19,12 +24,6 @@ This is a Docker build context to build the Docker image for Magento2 CE 2.1.3 w
    And please note that:  
    1. Please ensure that the package you download is from [Magento Tech Resource](https://magento.com/tech-resources/download) and the format of the package is Magento Community Edition 2.1.3.tar.gz.  
    2. You need to login with your account to download the Magento2 CE 2.1.3 package from [Magento Tech Resource](https://magento.com/tech-resources/download).  
-
-#### Limitations
-
-##### Limitations on Applying This Image to Azure Web App On Linux
-
-It may cause unexpect issues to scale out your App Service Plan to more than `1` instances if your App use storage tools like `MySQL` and `Redis` in the Docker container. Since several instances of Docker container will be created after App Service Plan scaled out to mutiple instances, and every instance of Docker container will have `1` MySQL server in it, it's hard to synchronize data in serveral database servers. As a result, we recommend you use `1` instance of App Service Plan if you are using `MySQL` or `Redis` in the Docker container, to scale out you would need to use Cleardb or external MySQL server.  
 
 ## How to Build the Image
 
@@ -44,23 +43,23 @@ $sudo docker run -t -p 80:80 -e BASE_URL=http://<your host name>/ [-e ADMIN_USER
 You may need to set environment variables to run the image, here are all the environment variables and their default values:  
 
 ```
-ADMIN_FIRSTNAME        firstname             <admin first name>
-ADMIN_LASTNAME         lastname              <admin last name>
-ADMIN_EMAIL            sample@example.com    <admin email>
-ADMIN_USER             root                  <admin user>
-ADMIN_PASSWORD         MS173m_QN             <admin password>
-DB_NAME                magento               <database name for magento>
-DB_USER                magento               <database user name for magento>
-DB_PASSWORD            MS173m_QN             <database password for magento>
-MYSQL_ROOT_PASWORD     MS173m_QN             <the password of MySQL root user>
-BACKEND_FRONTNAME      admin                 <backend frontname>
-APACHE_USER            apache                <the user name of apache2 authentication for phpmyadmin>
-APACHE_PASSWORD        MS173m_QN             <the password of apache2 authentication for phpmyadmin>
-PHPMYADMIN_PASSWORD    MS173m_QN             <the password of phpmyadmin>
-BASE_URL               http://127.0.0.1/     <site base url>
-USE_REWRITES           true                  <whether to use web server rewrites for generated links>
-ADMIN_USE_SECURITY_KEY true                  <whether to use a randomly generated key value to access pages in the Magento Admin and in forms>
-PRODUCTION_MODE      false                   <whether to set the site to production mode>
+ADMIN_FIRSTNAME         firstname             <admin first name>
+ADMIN_LASTNAME          lastname              <admin last name>
+ADMIN_EMAIL             sample@example.com    <admin email>
+ADMIN_USER              root                  <admin user>
+ADMIN_PASSWORD          MS173m_QN             <admin password>
+DB_NAME                 magento               <database name for magento>
+DB_USER                 magento               <database user name for magento>
+DB_PASSWORD             MS173m_QN             <database password for magento>
+MYSQL_ROOT_PASWORD      MS173m_QN             <the password of MySQL root user>
+BACKEND_FRONTNAME       admin_1qn                 <backend frontname>
+APACHE_USER             apache                <the user name of apache2 authentication for phpmyadmin>
+APACHE_PASSWORD         MS173m_QN             <the password of apache2 authentication for phpmyadmin>
+PHPMYADMIN_PASSWORD     MS173m_QN             <the password of phpmyadmin>
+BASE_URL                http://127.0.0.1/     <site base url>
+USE_REWRITES            true                  <whether to use web server rewrites for generated links>
+ADMIN_USE_SECURITY_KEY  true                  <whether to use a randomly generated key value to access pages in the Magento Admin and in forms>
+PRODUCTION_MODE         false                 <whether to set the site to production mode>
 ```
 
 ####Note:  
@@ -121,20 +120,20 @@ PRODUCTION_MODE              <whether to set the site to production mode>
 ```
 
 #### Process to Run Docker Container On Azure Web App Service
-##### Deploy your site with procedures above
+##### 1. Deploy your site with procedures above
 Make sure your application settings of your web app are all conform the rules.  
-##### Visit your website from a broswer and wait  
-1. The Docker image will be pulled and run while the first request reach the server according to the value of `DOCKER_CUSTOM_IMAGE_NAME`, so you have to wait the web broswer to show the site page.  
-##### See an Notice page   
-2. It will take less than 1 minute to show this page, it means the docker container has been run and the apache server has been enabled.  
+##### 2. Visit your website from a broswer and wait
+The Docker image will be pulled and run while the first request reach the server according to the value of `DOCKER_CUSTOM_IMAGE_NAME`, so you have to wait the web broswer to show the website page.   
+##### 3. See the Notice page
+It will take less than 1 minute to show this page, it means the docker container has been run and the apache server has been enabled.  
 ![alt text](https://raw.githubusercontent.com/Sharpeli/Packages/master/magento-optimization-images/magento-apache-enabled.png)  
   
-##### Wait for several minutes and refresh the Notice Page  
-3. If you choose not to deploy Magento to production mode by setting `PRODUCTION_MODE` to false, you need to wait for about 3 minutes and refresh the web page to see Magento home page, however, if you choose to deploy Magento to production mode, for the time costing of switching to production mode, you have to wait for about 8 minutes and refresh the web page to show the Magento home page.  
+##### 4. Wait for several minutes and refresh the Notice Page
+3. If you choose not to deploy Magento to production mode by setting `PRODUCTION_MODE` to false, you need to wait for about 3 minutes and refresh the web page to see Magento home page, however, if you choose to deploy Magento to production mode, for the time costing of switching to production mode, you have to wait for about 8 minutes and refresh the web page to see the Magento home page.  
 ![alt text](https://raw.githubusercontent.com/Sharpeli/Packages/master/magento-optimization-images/magento-home-page.PNG)  
 
-##### That's it
-4. If the Magento home page show, you can try to visit the admin portal to check if the Magento run normally, what's more, you can optimize your website according to the tutorials below.  
+##### 5. That's it
+4. If the Magento home page shows, you can try to visit the admin portal to check if the Magento run normally, what's more, you can optimize your website according to the tutorials below.  
 
 #####Note:
 1. If you don't set values for environment variables above, default vaules will be used.  
