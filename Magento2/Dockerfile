@@ -81,6 +81,7 @@ COPY phpmyadmin.conf /etc/apache2/conf-available/phpmyadmin.conf
 COPY phpmyadmin.conf /etc/apache2/conf-enabled/phpmyadmin.conf
 COPY phpmyadmin-access /usr/share/phpmyadmin/.htaccess
 COPY redis.php /redis.php
+COPY index.html /var/www/html/index.html
 
 # Change permissions for docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
